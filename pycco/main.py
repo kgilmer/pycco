@@ -289,6 +289,9 @@ languages = {
     ".rb": { "name": "ruby", "symbol": "#",
         "multistart": "=begin", "multiend": "=end"},
 
+    ".php": { "name": "php", "symbol": ["//", "#"],
+        "multistart": '/**', "multiend": '*/' },
+
     ".py": { "name": "python", "symbol": "#",
         "multistart": '"""', "multiend": '"""' },
 
@@ -303,16 +306,22 @@ languages = {
 
 # Build out the appropriate matchers and delimiters for each language.
 for ext, l in languages.items():
+    if isinstance(l["symbol"], basestring):
+        first_symbol = l["symbol"]
+        symbol_regex = l["symbol"]
+    else:
+        first_symbol = l["symbol"][0]
+        symbol_regex = "(%s)" % "|".join(map(re.escape, l["symbol"]))
     # Does the line begin with a comment?
-    l["comment_matcher"] = re.compile(r"^\s*" + l["symbol"] + "\s?")
+    l["comment_matcher"] = re.compile(r"^\s*" + symbol_regex + "\s?")
 
     # The dividing token we feed into Pygments, to delimit the boundaries between
     # sections.
-    l["divider_text"] = "\n" + l["symbol"] + "DIVIDER\n"
+    l["divider_text"] = "\n" + first_symbol + "DIVIDER\n"
 
     # The mirror of `divider_text` that we expect Pygments to return. We can split
     # on this to recover the original sections.
-    l["divider_html"] = re.compile(r'\n*<span class="c[1]?">' + l["symbol"] + 'DIVIDER</span>\n*')
+    l["divider_html"] = re.compile(r'\n*<span class="c[1]?">' + first_symbol + 'DIVIDER</span>\n*')
 
     # Get the Pygments Lexer for this language.
     l["lexer"] = lexers.get_lexer_by_name(l["name"])
