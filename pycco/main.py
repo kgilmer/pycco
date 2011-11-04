@@ -280,6 +280,8 @@ languages = {
     ".sql": { "name": "sql", "symbol": "--" },
 
     ".c":   { "name": "c", "symbol": "//"},
+    
+    ".java":   { "name": "java", "symbol": "//"},
 
     ".cpp": { "name": "cpp", "symbol": "//"},
 
